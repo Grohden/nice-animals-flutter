@@ -4,8 +4,8 @@ A nice flutter application.
 
 ## Why this?
 
-I was curious about how much work would take to rewrite [nice animals](https://github.com/Grohden/nice-animals/) using flutter
-I did this for these reasons, i need to see how different flutter is from the standard ~~bad designed~~ android API
+I was curious about how much work would take to rewrite [nice animals](https://github.com/Grohden/nice-animals/) using flutter,
+i need to see how different flutter is from the standard ~~bad designed~~ android API
 
 ## Notes
 
