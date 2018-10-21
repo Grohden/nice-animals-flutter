@@ -12,12 +12,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
+    return MaterialApp(
       title: 'Nice Application',
-      theme: new ThemeData(
+      theme: ThemeData(
         primarySwatch: Colors.amber,
       ),
-      home: new SplashScreenPage(title: 'Flutter Demo Home Page'),
+      home: SplashScreenPage(title: 'Nice splash page'),
       routes: routes,
     );
   }

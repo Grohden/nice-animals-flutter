@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nice_animals_flutter/pages/shibes_page.dart';
+import 'package:nice_animals_flutter/pages/animal_page.dart';
+import 'package:nice_animals_flutter/shibe/service/shibe_service.dart';
 
 class NiceHomeScreen extends StatefulWidget {
   @override
@@ -10,7 +11,6 @@ class _NiceHomeState extends State<NiceHomeScreen>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
 
-
   @override
   void initState() {
     super.initState();
@@ -19,27 +19,26 @@ class _NiceHomeState extends State<NiceHomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Nice Animals'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Nice Animals'),
         elevation: 0.7,
-        bottom: new TabBar(
+        bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
           tabs: <Widget>[
-            new Tab(text: "Cats"),
-            new Tab(text: "Shibes"),
-            new Tab(text: "Birbs"),
+            Tab(text: "Cats"),
+            Tab(text: "Shibes"),
+            Tab(text: "Birbs"),
           ],
         ),
-
       ),
-      body: new TabBarView(
+      body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          new ShibeScreen(),
-          new ShibeScreen(),
-          new ShibeScreen(),
+          ShibeScreen(AnimalType.cats),
+          ShibeScreen(AnimalType.shibes),
+          ShibeScreen(AnimalType.birds),
         ],
       ),
     );

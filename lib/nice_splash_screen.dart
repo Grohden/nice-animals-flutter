@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:nice_animals_flutter/util/nice_navigator.dart';
+import 'package:nice_animals_flutter/widgets/app_loader.dart';
 
 class SplashScreenPage extends StatefulWidget {
   SplashScreenPage({Key key, this.title}) : super(key: key);
@@ -21,33 +22,28 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
 
   @override
   Widget build(BuildContext context) {
-    var loader = new CircularProgressIndicator(
-      value: null,
-      valueColor: AlwaysStoppedAnimation<Color>(Colors.black54),
-    );
-
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return new Scaffold(
+    return Scaffold(
         backgroundColor: Colors.amber,
-        body: new Stack(
+        body: Stack(
           children: <Widget>[
-            new Center(
-              child: new Column(
+            Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  new Image.asset('assets/main_icon.png', width: 100.0),
-                  new Text(
+                  Image.asset('assets/main_icon.png', width: 100.0),
+                  Text(
                     'Nice Animals',
                     style: Theme.of(context).textTheme.display1,
                   ),
-                  new Container(
+                  Container(
                     margin: const EdgeInsets.only(top: 40.0),
-                    child: loader,
+                    child: AppLoader(),
                   )
                 ],
               ),
