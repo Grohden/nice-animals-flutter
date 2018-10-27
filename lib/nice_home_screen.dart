@@ -25,7 +25,7 @@ class _NiceHomeState extends State<NiceHomeScreen>
         elevation: 0.7,
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
+          indicatorColor: Colors.accents.first,
           tabs: <Widget>[
             Tab(text: "Cats"),
             Tab(text: "Shibes"),
@@ -36,9 +36,9 @@ class _NiceHomeState extends State<NiceHomeScreen>
       body: TabBarView(
         controller: _tabController,
         children: <Widget>[
-          ShibeScreen(AnimalType.cats),
-          ShibeScreen(AnimalType.shibes),
-          ShibeScreen(AnimalType.birds),
+          AnimalListScreen(AnimalType.cats),
+          AnimalListScreen(AnimalType.shibes),
+          AnimalListScreen(AnimalType.birds),
         ],
       ),
     );

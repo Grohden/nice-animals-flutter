@@ -1,30 +1,46 @@
 import 'package:flutter/material.dart';
 import 'package:nice_animals_flutter/shibe/service/shibe_service.dart';
+import 'package:nice_animals_flutter/util/listener/bottom_reach.dart';
 import 'package:nice_animals_flutter/widgets/app_loader.dart';
 
-class ShibeScreen extends StatefulWidget {
-  AnimalType type = null;
+class AnimalListScreen extends StatefulWidget {
+  AnimalType type;
 
-  ShibeScreen(AnimalType type) {
+  AnimalListScreen(AnimalType type) {
     this.type = type;
   }
 
   @override
-  _ShibeScreenState createState() => new _ShibeScreenState(type);
+  _AnimalListScreenState createState() => new _AnimalListScreenState(type);
 }
 
-class _ShibeScreenState extends State<ShibeScreen>
-    with AutomaticKeepAliveClientMixin<ShibeScreen> {
+class _AnimalListScreenState extends State<AnimalListScreen>
+    with AutomaticKeepAliveClientMixin<AnimalListScreen> {
+  ScrollController listController = ScrollController();
   bool hasLoaded = false;
+  bool isLoadingMore = false;
   List<String> shibes = [];
   AnimalType type;
 
-  _ShibeScreenState(AnimalType type) {
+  _AnimalListScreenState(AnimalType type) {
     this.type = type;
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  void loadMoreShibes() async {
+    setState(() {
+      isLoadingMore = true;
+    });
+
+    var loadedShibes = await ShibeService.get(type);
+
+    setState(() {
+      shibes = this.shibes + loadedShibes;
+      isLoadingMore = false;
+    });
+  }
 
   void loadShibes() async {
     var loadedShibes = await ShibeService.get(type);
@@ -40,6 +56,12 @@ class _ShibeScreenState extends State<ShibeScreen>
     super.initState();
     if (!hasLoaded) {
       loadShibes();
+
+      OnBottomReach(listController, () {
+        if (!isLoadingMore) {
+          loadMoreShibes();
+        }
+      });
     }
   }
 
@@ -54,6 +76,7 @@ class _ShibeScreenState extends State<ShibeScreen>
     } else {
       return GridView.count(
         crossAxisCount: 2,
+        controller: listController,
         children: List.generate(shibes.length, (index) {
           return Container(
             padding: EdgeInsets.all(5.0),
