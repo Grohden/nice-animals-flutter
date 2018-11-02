@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nice_animals_flutter/shibe/service/shibe_service.dart';
 import 'package:nice_animals_flutter/util/listener/bottom_reach.dart';
+import 'package:nice_animals_flutter/widgets/animal_card.dart';
 import 'package:nice_animals_flutter/widgets/app_loader.dart';
 
 class AnimalListScreen extends StatefulWidget {
@@ -61,7 +62,7 @@ class _AnimalListScreenState extends State<AnimalListScreen>
         if (!isLoadingMore) {
           loadMoreShibes();
         }
-      });
+      }, sensitivity: 400.0);
     }
   }
 
@@ -79,11 +80,8 @@ class _AnimalListScreenState extends State<AnimalListScreen>
         controller: listController,
         children: List.generate(shibes.length, (index) {
           return Container(
-            padding: EdgeInsets.all(5.0),
-            child: Image.network(
-              shibes[index],
-              fit: BoxFit.cover,
-            ),
+            padding: EdgeInsets.all(3.5),
+            child: AnimalCard(shibes[index]),
           );
         }),
       );
