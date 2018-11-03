@@ -4,6 +4,7 @@ import 'package:nice_animals_flutter/data/nice_picture/nice_picture_repository.d
 import 'package:nice_animals_flutter/data/nice_picture/specifications/all_by_type.dart';
 import 'package:nice_animals_flutter/ui/shibe/service/shibe_service.dart';
 import 'package:nice_animals_flutter/ui/util/listener/bottom_reach.dart';
+import 'package:nice_animals_flutter/ui/util/nice_navigator.dart';
 import 'package:nice_animals_flutter/ui/widgets/animal_card.dart';
 import 'package:nice_animals_flutter/ui/widgets/app_loader.dart';
 
@@ -75,6 +76,10 @@ class _AnimalListScreenState extends State<AnimalListScreen>
     }
   }
 
+  _openPicture(int index) {
+    NiceNavigator.goToGallery(context, initialPage: index, list: animals);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!hasLoaded) {
@@ -90,7 +95,11 @@ class _AnimalListScreenState extends State<AnimalListScreen>
         children: List.generate(animals.length, (index) {
           return Container(
             padding: EdgeInsets.all(3.5),
-            child: AnimalCard(animals[index]),
+            child: AnimalCard(
+                picture: animals[index],
+                onTap: () {
+                  _openPicture(index);
+                }),
           );
         }),
       );
