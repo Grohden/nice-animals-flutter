@@ -1,18 +1,33 @@
+import 'package:flutter/foundation.dart';
 import 'package:nice_animals_flutter/base/base_repository.dart';
 import 'package:nice_animals_flutter/base/base_specification.dart';
 import 'package:nice_animals_flutter/data/nice_picture/nice_picture.dart';
 import 'package:sqflite/sqflite.dart';
 
-const String NICE_PICTURE_TABLE = 'NicePicture';
-const String NICE_PICTURE_URL = "picture_url";
-
 class NicePictureRepository extends BaseRepository<NicePicture> {
+  static const String tableAnimalPicture = 'NicePicture';
+  static const String columnPictureURL = "picture_url";
+  static const String columnType = "animal_type";
+
   Database db;
+
+  static Map<String, dynamic> entityToMap(NicePicture picture) {
+    return {
+      columnPictureURL: picture.url,
+      columnType: describeEnum(picture.type)
+    };
+  }
+
+  static NicePicture mapToEntity(Map<String, dynamic> map) {
+    var type = map[columnType];
+    return NicePicture(map[columnPictureURL] as String,
+        AnimalType.values.firstWhere((it) => describeEnum(it) == type));
+  }
 
   @override
   Future<List<NicePicture>> getAll() async {
-    var list = await db.query(NICE_PICTURE_TABLE);
-    return list.map((map) => NicePicture(map[NICE_PICTURE_URL]));
+    var list = await db.query(tableAnimalPicture);
+    return list.map((map) => mapToEntity(map)).toList();
   }
 
   @override
@@ -22,19 +37,38 @@ class NicePictureRepository extends BaseRepository<NicePicture> {
 
   @override
   Future<NicePicture> insert(NicePicture entity, {reload: true}) async {
-    await db.insert(NICE_PICTURE_TABLE, {NICE_PICTURE_URL: entity.url});
+    await db.insert(tableAnimalPicture, entityToMap(entity));
     return entity;
   }
 
   @override
+  Future<NicePicture> insertOrUpdate(NicePicture entity, {reload: true}) async {
+    await db.insert(tableAnimalPicture, entityToMap(entity),
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return entity;
+  }
+
+  @override
+  Future insertAll(List<NicePicture> entities) async {
+    var transactions = entities.map((entity) => insert(entity));
+    await Future.wait(transactions);
+  }
+
+  @override
+  Future insertOrUpdateAll(List<NicePicture> entities) async {
+    var transactions = entities.map((entity) => insertOrUpdate(entity));
+    await Future.wait(transactions);
+  }
+
+  @override
   Future update(NicePicture entity) async {
-    await db.update(NICE_PICTURE_TABLE, {NICE_PICTURE_URL: entity.url});
+    await db.update(tableAnimalPicture, entityToMap(entity));
   }
 
   @override
   Future delete(NicePicture entity) async {
-    await db.delete(NICE_PICTURE_TABLE,
-        where: '$NICE_PICTURE_URL = ?', whereArgs: [entity.url]);
+    await db.delete(tableAnimalPicture,
+        where: '$columnPictureURL = ?', whereArgs: [entity.url]);
   }
 
   @override
@@ -44,14 +78,15 @@ class NicePictureRepository extends BaseRepository<NicePicture> {
 
   @override
   Future open() async {
-    var path = await getDatabasesPath();
+    var path = await getAppDBPath();
     db = await openDatabase(path, version: 1, onCreate: _onCreate);
   }
 
-  _onCreate(Database db, int version) async {
+  Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE $NICE_PICTURE_TABLE ( 
-        $NICE_PICTURE_URL TEXT PRIMARY KEY NOT NULL
+      CREATE TABLE $tableAnimalPicture ( 
+        $columnPictureURL TEXT PRIMARY KEY NOT NULL,
+        $columnType TEXT NOT NULL
       )
     ''');
   }

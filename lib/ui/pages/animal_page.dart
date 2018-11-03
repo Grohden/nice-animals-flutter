@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:nice_animals_flutter/data/nice_picture/nice_picture.dart';
+import 'package:nice_animals_flutter/data/nice_picture/nice_picture_repository.dart';
+import 'package:nice_animals_flutter/data/nice_picture/specifications/all_by_type.dart';
 import 'package:nice_animals_flutter/ui/shibe/service/shibe_service.dart';
 import 'package:nice_animals_flutter/ui/util/listener/bottom_reach.dart';
 import 'package:nice_animals_flutter/ui/widgets/animal_card.dart';
 import 'package:nice_animals_flutter/ui/widgets/app_loader.dart';
 
 class AnimalListScreen extends StatefulWidget {
-  AnimalType type;
+  final AnimalType type;
 
-  AnimalListScreen(AnimalType type) {
-    this.type = type;
-  }
+  const AnimalListScreen(this.type) : super();
 
   @override
   _AnimalListScreenState createState() => new _AnimalListScreenState(type);
@@ -20,11 +21,13 @@ class _AnimalListScreenState extends State<AnimalListScreen>
   ScrollController listController = ScrollController();
   bool hasLoaded = false;
   bool isLoadingMore = false;
-  List<String> shibes = [];
+  List<NicePicture> animals = [];
   AnimalType type;
+  NicePictureRepository repository;
 
   _AnimalListScreenState(AnimalType type) {
     this.type = type;
+    this.repository = NicePictureRepository();
   }
 
   @override
@@ -35,19 +38,25 @@ class _AnimalListScreenState extends State<AnimalListScreen>
       isLoadingMore = true;
     });
 
-    var loadedShibes = await ShibeService.get(type);
+    var loadedAnimals = await ShibeService.get(type);
 
     setState(() {
-      shibes = this.shibes + loadedShibes;
+      animals = this.animals + loadedAnimals;
       isLoadingMore = false;
     });
   }
 
   void loadShibes() async {
-    var loadedShibes = await ShibeService.get(type);
+    await repository.open();
+    var loadedAnimals = await repository.query(AllByType(type));
+    if (loadedAnimals.length < 1) {
+      loadedAnimals = await ShibeService.get(type);
+    }
+    await repository.insertOrUpdateAll(loadedAnimals);
+    await repository.close();
 
     setState(() {
-      shibes = loadedShibes;
+      animals = loadedAnimals;
       hasLoaded = true;
     });
   }
@@ -78,10 +87,10 @@ class _AnimalListScreenState extends State<AnimalListScreen>
       return GridView.count(
         crossAxisCount: 2,
         controller: listController,
-        children: List.generate(shibes.length, (index) {
+        children: List.generate(animals.length, (index) {
           return Container(
             padding: EdgeInsets.all(3.5),
-            child: AnimalCard(shibes[index]),
+            child: AnimalCard(animals[index]),
           );
         }),
       );
