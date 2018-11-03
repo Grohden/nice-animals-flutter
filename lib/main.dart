@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nice_animals_flutter/nice_home_screen.dart';
-import 'package:nice_animals_flutter/nice_splash_screen.dart';
+import 'package:nice_animals_flutter/ui/nice_home_screen.dart';
+import 'package:nice_animals_flutter/ui/nice_splash_screen.dart';
 
 void main() => runApp(new MyApp());
 

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nice_animals_flutter/shibe/service/shibe_service.dart';
-import 'package:nice_animals_flutter/util/listener/bottom_reach.dart';
-import 'package:nice_animals_flutter/widgets/animal_card.dart';
-import 'package:nice_animals_flutter/widgets/app_loader.dart';
+import 'package:nice_animals_flutter/ui/shibe/service/shibe_service.dart';
+import 'package:nice_animals_flutter/ui/util/listener/bottom_reach.dart';
+import 'package:nice_animals_flutter/ui/widgets/animal_card.dart';
+import 'package:nice_animals_flutter/ui/widgets/app_loader.dart';
 
 class AnimalListScreen extends StatefulWidget {
   AnimalType type;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nice_animals_flutter/pages/animal_page.dart';
-import 'package:nice_animals_flutter/shibe/service/shibe_service.dart';
+import 'package:nice_animals_flutter/ui/pages/animal_page.dart';
+import 'package:nice_animals_flutter/ui/shibe/service/shibe_service.dart';
 
 class NiceHomeScreen extends StatefulWidget {
   @override

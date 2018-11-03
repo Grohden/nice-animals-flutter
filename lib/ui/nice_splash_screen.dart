@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:nice_animals_flutter/util/nice_navigator.dart';
-import 'package:nice_animals_flutter/widgets/app_loader.dart';
+import 'package:nice_animals_flutter/ui/util/nice_navigator.dart';
+import 'package:nice_animals_flutter/ui/widgets/app_loader.dart';
 
 class SplashScreenPage extends StatefulWidget {
   SplashScreenPage({Key key, this.title}) : super(key: key);
