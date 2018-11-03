@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nice_animals_flutter/data/nice_picture/nice_picture.dart';
 import 'package:nice_animals_flutter/ui/nice_fullscreen_gallery.dart';
 
@@ -19,5 +20,13 @@ class NiceNavigator {
             ),
       ),
     );
+  }
+
+  static void setStatusBarState({@required bool shown}) {
+    if (shown) {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    } else {
+      SystemChrome.setEnabledSystemUIOverlays([]);
+    }
   }
 }

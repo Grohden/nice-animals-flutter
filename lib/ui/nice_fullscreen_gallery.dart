@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:nice_animals_flutter/data/nice_picture/nice_picture.dart';
+import 'package:nice_animals_flutter/ui/util/nice_navigator.dart';
 
 class NiceFullScreenGallery extends StatefulWidget {
   int initialPage;
@@ -22,14 +22,14 @@ class _NiceFullScreenGalleryState extends State<NiceFullScreenGallery> {
 
   _NiceFullScreenGalleryState(this.initialPage, this.list) : super() {
     this.controller = PageController(initialPage: initialPage);
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    NiceNavigator.setStatusBarState(shown: false);
   }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+        NiceNavigator.setStatusBarState(shown: true);
         Navigator.pop(context, true);
       },
       child: Scaffold(
