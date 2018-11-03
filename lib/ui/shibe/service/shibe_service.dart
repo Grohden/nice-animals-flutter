@@ -11,30 +11,8 @@ class ShibeService {
 
     Iterable jsonResponse = json.decode(response.body);
 
-    return List < String
-    >
-        .
-    from
-    (
-    jsonResponse
-    )
-        .
-    map
-    (
-    (
-    url
-    )
-    =>
-    NicePicture
-    (
-    url
-    ,
-    type
-    )
-    )
-        .
-    toList
-    (
-    );
+    return List<String>.from(jsonResponse)
+        .map((url) => NicePicture(url, type))
+        .toList();
   }
 }
