@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -6,12 +7,14 @@ import 'package:nice_animals_flutter/data/nice_picture/nice_picture.dart';
 
 class ShibeService {
   static Future<List<NicePicture>> get(AnimalType type, {int quantity}) async {
-    var response = await http.get(
+    final response = await http.get(
         'https://shibe.online/api/${describeEnum(type)}?count=${quantity ?? 10}');
 
-    Iterable jsonResponse = json.decode(response.body);
+    // ignore: avoid_as
+    final jsonResponse = json.decode(response.body) as List<dynamic>;
 
-    return List<String>.from(jsonResponse)
+    return jsonResponse
+        .cast<String>()
         .map((url) => NicePicture(url, type))
         .toList();
   }

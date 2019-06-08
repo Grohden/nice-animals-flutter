@@ -1,3 +1,3 @@
 class Constants {
-  static const databaseName = "nice.db";
+  static const databaseName = 'nice.db';
 }

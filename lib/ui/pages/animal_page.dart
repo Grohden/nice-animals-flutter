@@ -9,27 +9,26 @@ import 'package:nice_animals_flutter/ui/widgets/animal_card.dart';
 import 'package:nice_animals_flutter/ui/widgets/app_loader.dart';
 
 class AnimalListScreen extends StatefulWidget {
-  final AnimalType type;
-
   const AnimalListScreen(this.type) : super();
 
+  final AnimalType type;
+
   @override
-  _AnimalListScreenState createState() => new _AnimalListScreenState(type);
+  _AnimalListScreenState createState() => _AnimalListScreenState(type);
 }
 
 class _AnimalListScreenState extends State<AnimalListScreen>
     with AutomaticKeepAliveClientMixin<AnimalListScreen> {
+
+  _AnimalListScreenState(this.type);
+
+  final repository = NicePictureRepository();
   ScrollController listController = ScrollController();
   bool hasLoaded = false;
   bool isLoadingMore = false;
   List<NicePicture> animals = [];
   AnimalType type;
-  NicePictureRepository repository;
 
-  _AnimalListScreenState(AnimalType type) {
-    this.type = type;
-    this.repository = NicePictureRepository();
-  }
 
   @override
   bool get wantKeepAlive => true;
@@ -39,10 +38,10 @@ class _AnimalListScreenState extends State<AnimalListScreen>
       isLoadingMore = true;
     });
 
-    var loadedAnimals = await ShibeService.get(type);
+    final loadedAnimals = await ShibeService.get(type);
 
     setState(() {
-      animals = this.animals + loadedAnimals;
+      animals = animals + loadedAnimals;
       isLoadingMore = false;
     });
   }
@@ -50,7 +49,7 @@ class _AnimalListScreenState extends State<AnimalListScreen>
   void loadShibes() async {
     await repository.open();
     var loadedAnimals = await repository.query(AllByType(type));
-    if (loadedAnimals.length < 1) {
+    if (loadedAnimals.isEmpty) {
       loadedAnimals = await ShibeService.get(type);
     }
     await repository.insertOrUpdateAll(loadedAnimals);
@@ -76,7 +75,7 @@ class _AnimalListScreenState extends State<AnimalListScreen>
     }
   }
 
-  _openPicture(int index) {
+  void _openPicture(int index) {
     NiceNavigator.goToGallery(context, initialPage: index, list: animals);
   }
 
@@ -94,7 +93,7 @@ class _AnimalListScreenState extends State<AnimalListScreen>
         controller: listController,
         children: List.generate(animals.length, (index) {
           return Container(
-            padding: EdgeInsets.all(3.5),
+            padding: const EdgeInsets.all(3.5),
             child: AnimalCard(
                 picture: animals[index],
                 onTap: () {

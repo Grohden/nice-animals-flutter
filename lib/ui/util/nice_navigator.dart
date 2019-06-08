@@ -5,7 +5,7 @@ import 'package:nice_animals_flutter/ui/nice_fullscreen_gallery.dart';
 
 class NiceNavigator {
   static void goToHome(BuildContext context) {
-    Navigator.pushReplacementNamed(context, "/home");
+    Navigator.pushReplacementNamed(context, '/home');
   }
 
   static void goToGallery(BuildContext context,

@@ -5,12 +5,12 @@ import 'package:nice_animals_flutter/ui/util/nice_navigator.dart';
 import 'package:nice_animals_flutter/ui/widgets/app_loader.dart';
 
 class SplashScreenPage extends StatefulWidget {
-  SplashScreenPage({Key key, this.title}) : super(key: key);
+  const SplashScreenPage({Key key, this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _SplashScreenPageState createState() => new _SplashScreenPageState();
+  _SplashScreenPageState createState() => _SplashScreenPageState();
 }
 
 class _SplashScreenPageState extends State<SplashScreenPage> {

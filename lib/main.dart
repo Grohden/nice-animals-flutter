@@ -3,10 +3,10 @@ import 'package:nice_animals_flutter/ui/nice_home_screen.dart';
 import 'package:nice_animals_flutter/ui/nice_splash_screen.dart';
 import 'package:sqflite/sqflite.dart';
 
-void main() => runApp(new MyApp());
+void main() => runApp(MyApp());
 
 var routes = <String, WidgetBuilder>{
-  "/home": (BuildContext context) => NiceHomeScreen(),
+  "/home": (context) => NiceHomeScreen(),
 };
 
 class MyApp extends StatelessWidget {

@@ -4,11 +4,11 @@ import 'package:nice_animals_flutter/data/nice_picture/nice_picture.dart';
 import 'package:nice_animals_flutter/ui/util/nice_navigator.dart';
 
 class NiceFullScreenGallery extends StatefulWidget {
-  int initialPage;
-  List<NicePicture> list;
-
-  NiceFullScreenGallery({@required this.initialPage, @required this.list})
+  const NiceFullScreenGallery({@required this.initialPage, @required this.list})
       : super();
+
+  final int initialPage;
+  final List<NicePicture> list;
 
   @override
   _NiceFullScreenGalleryState createState() =>
@@ -16,14 +16,15 @@ class NiceFullScreenGallery extends StatefulWidget {
 }
 
 class _NiceFullScreenGalleryState extends State<NiceFullScreenGallery> {
+  _NiceFullScreenGalleryState(this.initialPage, this.list) : super() {
+    controller = PageController(initialPage: initialPage);
+    NiceNavigator.setStatusBarState(shown: false);
+  }
+
   List<NicePicture> list;
   int initialPage;
   PageController controller;
 
-  _NiceFullScreenGalleryState(this.initialPage, this.list) : super() {
-    this.controller = PageController(initialPage: initialPage);
-    NiceNavigator.setStatusBarState(shown: false);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +37,12 @@ class _NiceFullScreenGalleryState extends State<NiceFullScreenGallery> {
         backgroundColor: Colors.black,
         body: PageView.builder(
           controller: controller,
-          physics: AlwaysScrollableScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(),
           itemBuilder: (BuildContext context, int index) {
             return CachedNetworkImage(
               imageUrl: list[index].url,
-              placeholder: Center(child: CircularProgressIndicator()),
-              errorWidget: Image.asset("assets/image_not_found.png"),
+              placeholder: Center(child: const CircularProgressIndicator()),
+              errorWidget: Image.asset('assets/image_not_found.png'),
               fit: BoxFit.contain,
             );
           },
