@@ -1,33 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:nice_animals_flutter/ui/nice_home_screen.dart';
-import 'package:nice_animals_flutter/ui/nice_splash_screen.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:get/get.dart';
+import 'package:niceanimals/ui/screen/home_screen.dart';
+import 'package:niceanimals/ui/screen/splash_screen.dart';
+import 'package:shibe_api/services/shibe_api_service.dart';
 
-void main() => runApp(MyApp());
-
-var routes = <String, WidgetBuilder>{
-  "/home": (context) => NiceHomeScreen(),
-};
+void main() {
+  Get.put(ShibeApiService());
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  MyApp() {
-    assert(() {
-      Sqflite.setDebugModeOn(true);
-      return true;
-    }());
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Nice Application',
+    return GetMaterialApp(
+      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.amber,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreenPage(title: 'Nice splash page'),
-      routes: routes,
+      home: HomeScreen(),
     );
   }
 }
