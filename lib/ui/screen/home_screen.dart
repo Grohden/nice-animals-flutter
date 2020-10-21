@@ -1,83 +1,136 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:niceanimals/ui/screen/gallery_screen.dart';
+import 'package:nice_animals_flutter/extensions/scroll_controller.dart';
+import 'package:nice_animals_flutter/main.dart';
+import 'package:nice_animals_flutter/ui/screen/gallery_screen.dart';
 import 'package:shibe_api/shibe_api.dart';
 
 const aspectRatio = 1.0;
 
-class HomeController extends RxController {
-  final api = Get.find<ShibeApiService>();
-  final loading = true.obs;
-  final error = ''.obs;
-  final dogs = <AnimalPicture>[].obs;
-
+class HomeScreen extends StatefulWidget {
   @override
-  void onInit() async {
-    loading.value = true;
-    final newDogs = await api.get(AnimalType.shibes);
-    dogs.assignAll(newDogs);
-    loading.value = false;
-  }
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class HomeScreen extends StatelessWidget {
+class _HomeScreenState extends State<HomeScreen> {
+  ScrollController _controller;
+  bool _loading = false;
+  bool _loadingMore = false;
+  List<AnimalPicture> _dogs = [];
+
   @override
-  Widget build(BuildContext context) {
-    final count = MediaQuery.of(context).size.width / 500;
+  void initState() {
+    super.initState();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Shibas'),
-      ),
-      body: GetX<HomeController>(
-        init: HomeController(),
-        builder: (_) {
-          if (_.loading.value) {
-            return Center(child: CircularProgressIndicator());
-          }
+    _controller = ScrollController()
+      ..onBottomReach(
+        _loadMore,
+        throttleDuration: const Duration(seconds: 1),
+      );
 
-          return SafeArea(
-            child: GridView.count(
-              crossAxisCount: count.ceil(),
-              childAspectRatio: aspectRatio,
-              children: List.generate(
-                _.dogs.value.length,
-                (index) {
-                  final animal = _.dogs.value[index];
+    _initAsync();
+  }
 
-                  return _buildImage(animal);
-                },
-              ),
-            ),
-          );
-        },
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _initAsync() async {
+    setState(() {
+      _loading = true;
+    });
+
+    final newDogs = await shibeApiService.get(AnimalType.shibes);
+
+    if (mounted) {
+      setState(() {
+        _dogs = newDogs.toList();
+        _loading = false;
+      });
+    }
+  }
+
+  void _loadMore() async {
+    if (_loadingMore) {
+      return;
+    }
+
+    setState(() {
+      _loadingMore = true;
+    });
+
+    final newDogs = await shibeApiService.get(AnimalType.shibes);
+
+    if (mounted) {
+      setState(() {
+        _dogs = _dogs + newDogs.toList();
+        _loadingMore = false;
+      });
+    }
+  }
+
+  Widget _buildBody() {
+    if (_loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    final ratio = MediaQuery.of(context).size.width / 300;
+
+    return SafeArea(
+      bottom: false,
+      child: GridView.count(
+        crossAxisCount: ratio.ceil(),
+        controller: _controller,
+        childAspectRatio: aspectRatio,
+        children: List.generate(
+          _dogs.length,
+          (index) {
+            final animal = _dogs[index];
+
+            return _buildImage(animal);
+          },
+        ),
       ),
     );
   }
 
   Widget _buildImage(AnimalPicture animal) {
-    return InkWell(
-      onTap: () => Get.to(GalleryScreen(animal.url)),
-      hoverColor: Colors.red,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GalleryScreen(animal.url),
+          ),
+        );
+      },
       child: Hero(
         tag: animal.url,
-        // Without fitted box, we lose frame rate. TODO: find out why
-        child: FittedBox(
+        child: CachedNetworkImage(
+          imageUrl: animal.url,
           fit: BoxFit.cover,
-          child: CachedNetworkImage(
-            imageUrl: animal.url,
-            fit: BoxFit.none,
-            placeholder: (context, url) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-            errorWidget: (context, url, error) =>
-                Image.asset('assets/image_not_found.png'),
-          ),
+          placeholder: (context, url) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+          errorWidget: (context, url, error) {
+            return Image.asset('assets/image_not_found.png');
+          },
         ),
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Shibes'),
+      ),
+      body: _buildBody(),
     );
   }
 }
