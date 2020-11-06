@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:nice_animals_flutter/ui/screen/home_screen.dart';
 import 'package:shibe_api/services/shibe_api_service.dart';
+import 'package:dio/dio.dart';
 
-final shibeApiService = ShibeApiService();
+final dio = Dio(BaseOptions());
+final shibeApiService = ShibeApiService(dio);
 
 void main() {
   runApp(MyApp());

@@ -4,6 +4,7 @@ import 'package:nice_animals_flutter/extensions/scroll_controller.dart';
 import 'package:nice_animals_flutter/main.dart';
 import 'package:nice_animals_flutter/ui/screen/gallery_screen.dart';
 import 'package:shibe_api/shibe_api.dart';
+import 'package:async/async.dart' show Result;
 
 const aspectRatio = 1.0;
 
@@ -14,8 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   ScrollController _controller;
+  String _error;
   bool _loading = false;
-  bool _loadingMore = false;
   List<AnimalPicture> _dogs = [];
 
   @override
@@ -24,11 +25,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _controller = ScrollController()
       ..onBottomReach(
-        _loadMore,
+        () => _makeListRequest((items) => _dogs + items),
         throttleDuration: const Duration(seconds: 1),
       );
 
-    _initAsync();
+    _makeListRequest((items) => items);
   }
 
   @override
@@ -37,41 +38,39 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  void _initAsync() async {
-    setState(() {
-      _loading = true;
-    });
-
-    final newDogs = await shibeApiService.get(AnimalType.shibes);
-
-    if (mounted) {
-      setState(() {
-        _dogs = newDogs.toList();
-        _loading = false;
-      });
-    }
-  }
-
-  void _loadMore() async {
-    if (_loadingMore) {
+  void _makeListRequest(
+    List<AnimalPicture> Function(List<AnimalPicture> items) listTransform,
+  ) async {
+    if (_loading) {
       return;
     }
 
     setState(() {
-      _loadingMore = true;
+      _error = null;
+      _loading = true;
     });
 
-    final newDogs = await shibeApiService.get(AnimalType.shibes);
+    final result = await Result.capture(shibeApiService.get(AnimalType.shibes));
 
     if (mounted) {
       setState(() {
-        _dogs = _dogs + newDogs.toList();
-        _loadingMore = false;
+        if (result.isError) {
+          _error = result.asError.error.toString();
+        } else {
+          _dogs = listTransform(result.asValue.value.toList());
+        }
+
+        _loading = false;
       });
     }
+
   }
 
   Widget _buildBody() {
+    if (_error?.isNotEmpty == true) {
+      return Center(child: Text(_error));
+    }
+
     if (_loading) {
       return Center(child: CircularProgressIndicator());
     }
